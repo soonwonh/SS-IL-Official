@@ -6,16 +6,16 @@ class ModelFactory():
     @staticmethod
     def get_model(dataset, trainer):
         
-        if dataset == 'CIFAR100':
+        if dataset == 'Cifar100':
             
             if trainer == 'wild' or trainer == 'wild_exp':
                 import networks.wrn as res
                 return res.wrn(100)
             
-            import networks.resnet32 as res
-            return res.resnet32(100, trainer)
+            import networks.resnet18 as res
+            return res.resnet18(100, trainer)
         
-        if dataset == 'CIFAR10':
+        if dataset == 'Cifar10':
             
             import networks.resnet18 as res
             return res.resnet32(10, trainer)
