@@ -15,7 +15,7 @@ class ModelFactory():
             import networks.resnet18 as res
             return res.resnet18(100, trainer)
         
-        if dataset == 'Cifar10':
+        elif dataset == 'Cifar10':
             
             import networks.resnet18 as res
             return res.resnet32(10, trainer)
