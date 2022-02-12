@@ -33,6 +33,7 @@ def get_args():
     parser.add_argument('--factor', type=int, default=4, help='Epoch decay factor')
     parser.add_argument('--date', type=str, default='', help='(default=%(default)s)')
     parser.add_argument('--debug', type=int, default=1, help='Use debug')
+    parser.add_argument('--taw', type=int, default=0, help='Task-IL evaluation')
     parser.add_argument('--benchmark', action='store_true', default=False, help='Use cudnn.benchmark')
     parser.add_argument('--dataset', default='', type=str, required=True,
                         choices=['Imagenet',
