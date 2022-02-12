@@ -53,7 +53,7 @@ class Trainer(trainer.GenericTrainer):
             
             output = self.model(data)
             
-            if tasknum > 0 and self.args.prev_new:
+            if tasknum > 0 and self.args.ss:
                 loss_CE_curr = 0
                 loss_CE_prev = 0
                 curr_mask = target >= mid
