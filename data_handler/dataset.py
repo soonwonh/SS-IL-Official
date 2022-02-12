@@ -118,6 +118,49 @@ class Imagenet(Dataset):
         
         print(len(self.train_data))
             
+class Cifar100(Dataset):
+    def __init__(self):
+        super().__init__(100, "Cifar100")
+        
+        mean = [0.5071, 0.4867, 0.4408]
+        std = [0.2675, 0.2565, 0.2761]
+        
+        self.train_transform = transforms.Compose([
+        transforms.RandomCrop(32, padding=4),
+        transforms.RandomHorizontalFlip(),
+        transforms.ColorJitter(brightness=63 / 255),
+        transforms.ToTensor(),
+        transforms.Normalize((0.5071, 0.4867, 0.4408), (0.2675, 0.2565, 0.2761)),
+    ])
+        
+        self.test_transform = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize((0.5071, 0.4867, 0.4408), (0.2675, 0.2565, 0.2761)),
+    ])
+        
+        train_data =datasets.ImageFolder("./cifar100/train", transform=self.train_transform)
+        test_data = datasets.ImageFolder("./cifar100/test", transform=self.test_transform)
+        self.loader = torch.utils.data.DataLoader(train_data)
+        
+        self.train_data = []
+        self.train_labels = []
+        self.test_data = []
+        self.test_labels = []
+        
+        for i in range(len(train_data.imgs)):
+            path, target = train_data.imgs[i]
+            self.train_data.append(path)
+            self.train_labels.append(target)
+            
+        for i in range(len(test_data.imgs)):
+            path, target = test_data.imgs[i]
+            self.test_data.append(path)
+            self.test_labels.append(target)
+        
+        self.train_data = np.stack(self.train_data, axis=0)
+        self.test_data = np.stack(self.test_data, axis=0)
+        
+        print(len(self.train_data))
         
 class Google_Landmark_v2_1K(Dataset):
     # First, download google landmark dataset v2
