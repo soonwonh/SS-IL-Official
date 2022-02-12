@@ -66,7 +66,7 @@ class ResNet(nn.Module):
         if norm_layer is None:
             norm_layer = nn.BatchNorm2d
         self._norm_layer = norm_layer
-
+        self.trainer = trainer
         self.inplanes = 64
         self.dilation = 1
         self.use_last_relu = True
@@ -95,12 +95,37 @@ class ResNet(nn.Module):
                                        dilate=replace_stride_with_dilation[2])
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(512 * block.expansion, num_classes)
+        if trainer == 'der':
+            self.fc = nn.ModuleList()
         if self.use_last_relu == False:
             if trainer == 'rebalancing':
                 self.fc = NormedLinear(512 * block.expansion, num_classes)
             elif trainer == 'podnet':
                 self.fc = LSCLinear(512 * block.expansion, num_classes)
-
+        
+        last_relu = nn.Identity() if trainer =='rebalancing' or trainer == 'podnet' else self.relu
+        encoder = nn.Sequential(
+                self.conv1,
+                self.bn1,
+                self.relu,
+                self.maxpool,
+                self.layer1,
+                self.relu,
+                self.layer2,
+                self.relu,
+                self.layer3,
+                self.relu,
+                self.layer4,
+                last_relu
+                self.avgpool,
+                nn.Flatten()
+            )
+        if trainer == 'der':
+            self.encoders = nn.ModuleList()
+            self.encoders.append(encoder)
+        else:
+            self.encoder = encoder
+                
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
                 nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
@@ -117,7 +142,13 @@ class ResNet(nn.Module):
                     nn.init.constant_(m.bn3.weight, 0)
                 elif isinstance(m, BasicBlock):
                     nn.init.constant_(m.bn2.weight, 0)
-
+    
+    def add_encoder(self):
+        self.encoders.append(self.encoder)
+        
+    def add_head(self, num_outputs):
+        self.heads.append(nn.Linear(512, num_outputs))
+    
     def _make_layer(self, block, planes, blocks, stride=1, dilate=False):
         norm_layer = self._norm_layer
         downsample = None
@@ -147,31 +178,30 @@ class ResNet(nn.Module):
 
         return nn.Sequential(*layers)
 
-    def forward(self, x, feature_return=False, podnet = False):
-        
-        x = self.conv1(x)
-        x = self.bn1(x)
-        x = self.relu(x)
-        x = self.maxpool(x)
-        
-        x1 = self.layer1(x)
-        x2 = self.layer2(F.relu(x1))
-        x3 = self.layer3(F.relu(x2))
-        x4 = self.layer4(F.relu(x3))
-        
-        if self.use_last_relu:
-            x4 = F.relu(x4)
-        
-        x = self.avgpool(x4)
-        x = torch.flatten(x, 1)
+    def forward(self, x, feature_return=False):
+        if self.trainer =='der':
+            features = []
+            for encoder in self.encoders:
+                features.append(encoder(x))
+            print("len(features)",len(features))
+            print("features[0].shape",features[0].shape)
+            features = torch.cat(features, dim=2)
+            print("features.shape",features.shape)
+        else:
+            x = self.encoder(x)
+            
         feature = x / torch.norm(x, 2, 1).unsqueeze(1)
-#         feature = x
-        x = self.fc(x)
+        if self.trainer =='der':
+            for head in self.heads:
+                output.append(head(features))
+            output = torch.cat(output, dim=1)
+        else:
+            x = self.fc(x)
         
         act = [x1, x2, x3, x4]
         
         if feature_return:
-            if podnet:
+            if self.trainer == 'podnet':
                 return x, feature, act
             return x, feature
         return x
