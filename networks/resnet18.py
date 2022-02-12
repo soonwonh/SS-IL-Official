@@ -179,6 +179,7 @@ class ResNet(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x, feature_return=False):
+        
         if self.trainer =='der':
             features = []
             for encoder in self.encoders:
@@ -187,22 +188,26 @@ class ResNet(nn.Module):
             print("features[0].shape",features[0].shape)
             features = torch.cat(features, dim=2)
             print("features.shape",features.shape)
-        else:
-            x = self.encoder(x)
-            
-        feature = x / torch.norm(x, 2, 1).unsqueeze(1)
-        if self.trainer =='der':
             for head in self.heads:
                 output.append(head(features))
-            output = torch.cat(output, dim=1)
-        else:
+            x = torch.cat(output, dim=1)
+            
+        elif self.trainer =='podnet':
+            x1 = self.layer1(self.maxpool(self.relu(self.bn1(self.conv1(x)))))
+            x2 = self.layer2(F.relu(x1))
+            x3 = self.layer3(F.relu(x2))
+            x4 = self.layer4(F.relu(x3))
+            x = torch.flatten(self.avgpool(x4), 1)
+            feature = x / torch.norm(x, 2, 1).unsqueeze(1)
             x = self.fc(x)
-        
-        act = [x1, x2, x3, x4]
-        
+        else:
+            x = self.encoder(x)
+            feature = x / torch.norm(x, 2, 1).unsqueeze(1)
+            x = self.fc(x)
+
         if feature_return:
             if self.trainer == 'podnet':
-                return x, feature, act
+                return x, feature, [x1, x2, x3, x4]
             return x, feature
         return x
     
