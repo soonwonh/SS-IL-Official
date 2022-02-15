@@ -81,9 +81,9 @@ class ResNet(nn.Module):
             # each element in the tuple indicates if we should replace
             # the 2x2 stride with a dilated convolution instead
             self.replace_stride_with_dilation = [False, False, False]
-        if len(replace_stride_with_dilation) != 3:
+        if len(self.replace_stride_with_dilation) != 3:
             raise ValueError("replace_stride_with_dilation should be None "
-                             "or a 3-element tuple, got {}".format(replace_stride_with_dilation))
+                             "or a 3-element tuple, got {}".format(self.replace_stride_with_dilation))
         
         self.fc = nn.Linear(512 * block.expansion, num_classes)
         if trainer == 'der':
