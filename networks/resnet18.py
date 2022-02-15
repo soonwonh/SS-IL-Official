@@ -194,6 +194,8 @@ class ResNet(nn.Module):
     def forward(self, x, feature_return=False):
         
         if self.trainer =='der':
+            """
+            # 1) feature concatenation
             features = []
             for encoder in self.encoders:
                 features.append(encoder(x))
@@ -204,7 +206,13 @@ class ResNet(nn.Module):
             for head in self.heads:
                 output.append(head(features))
             x = torch.cat(output, dim=1)
-            
+            """
+            # 2) parallel forwarding
+            logits = []
+            for i, encoder in enumerate(self.encoders):
+                logits.append(self.heads[i](encoder(x)))
+            x = logits.concat(logits, dim=1)
+
         elif self.trainer =='podnet':
             x1 = self.layer1(self.maxpool(self.relu(self.bn1(self.conv1(x)))))
             x2 = self.layer2(self.relu(x1))
