@@ -19,8 +19,6 @@ import trainer
 class Trainer(trainer.GenericTrainer):
     def __init__(self, IncrementalLoader, model, args):
         super().__init__(IncrementalLoader, model, args)
-        if 'Hinge' in self.args.date:
-            self.model.module.fc = NormedLinear(512, 1004).cuda()
         self.loss = torch.nn.CrossEntropyLoss(reduction='mean')
         
     def balance_fine_tune(self):
