@@ -76,7 +76,7 @@ class ResNet(nn.Module):
         self.groups = groups
         self.base_width = width_per_group
         self.last_relu = nn.Identity() if trainer =='rebalancing' or trainer == 'podnet' else nn.ReLU(inplace=True)
-        
+        self.heads = []
         if replace_stride_with_dilation is None:
             # each element in the tuple indicates if we should replace
             # the 2x2 stride with a dilated convolution instead
