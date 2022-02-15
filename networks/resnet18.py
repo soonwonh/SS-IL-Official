@@ -150,7 +150,7 @@ class ResNet(nn.Module):
         return encoder
     
     def add_encoder(self):
-        new_encoder = self.init_encoder().cuda()
+        new_encoder = self.init_encoder()
         self.encoders.append(new_encoder)
         
     def add_head(self, num_outputs):
@@ -158,7 +158,7 @@ class ResNet(nn.Module):
             head.eval()
             for param in head.parameters():
                 param.requires_grad=False
-        new_head = nn.Linear(512, num_outputs).cuda()
+        new_head = nn.Linear(512, num_outputs)
         self.heads.append(new_head)
         
     
