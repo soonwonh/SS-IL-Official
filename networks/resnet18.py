@@ -97,7 +97,6 @@ class ResNet(nn.Module):
 
         if trainer == 'der':
             self.encoders = nn.ModuleList()
-            self.encoders.append(self.encoder)
                 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
