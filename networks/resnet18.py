@@ -75,7 +75,7 @@ class ResNet(nn.Module):
         self.norm_layer = norm_layer
         self.groups = groups
         self.base_width = width_per_group
-        self.last_relu = nn.Identity() if trainer =='rebalancing' or trainer == 'podnet' else nn.Relu(inplace=True)
+        self.last_relu = nn.Identity() if trainer =='rebalancing' or trainer == 'podnet' else nn.ReLU(inplace=True)
         
         if replace_stride_with_dilation is None:
             # each element in the tuple indicates if we should replace
