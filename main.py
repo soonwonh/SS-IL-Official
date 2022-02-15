@@ -28,9 +28,10 @@ dataset.shuffle_data(shuffle_idx)
 print(shuffle_idx)
 print("Label shuffled")
 
-# Use Multi-GPU model
+
 myModel = networks.ModelFactory.get_model(args.dataset, args.trainer)
-myModel = torch.nn.DataParallel(myModel).cuda()
+# Use Multi-GPU model
+#myModel = torch.nn.DataParallel(myModel).cuda()
 
 incremental_loader = data_handler.IncrementalLoader(dataset, args)
 result_loader = data_handler.ResultLoader(dataset, args)
