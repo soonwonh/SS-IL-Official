@@ -35,7 +35,7 @@ class TrainerFactory():
             import trainer.podnet as trainer
         elif args.trainer == 'wild':
             import trainer.wild as trainer
-        elif args.der == 'der':
+        elif args.trainer == 'der':
             import trainer.der as der
         
         return trainer.Trainer(train_iterator, myModel, args)
