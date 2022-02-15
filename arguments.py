@@ -53,7 +53,8 @@ def get_args():
                                  'eeil',
                                  'rebalancing',
                                  'podnet',
-                                 'wild',], 
+                                 'wild',
+                                 'der'], 
                         help='(default=%(default)s)')
     parser.add_argument('--distill', default='local', type=str, required=False,
                         choices=['local', 
