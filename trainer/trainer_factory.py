@@ -36,7 +36,7 @@ class TrainerFactory():
         elif args.trainer == 'wild':
             import trainer.wild as trainer
         elif args.trainer == 'der':
-            import trainer.der as der
+            import trainer.der as trainer
         
         return trainer.Trainer(train_iterator, myModel, args)
     
