@@ -69,8 +69,11 @@ for t in range(tasknum):
     # Load pre-trained model
     flag = utils.load_models(args, myTrainer, t)
         
+    if args.trainer == 'der':
+        myTrainer.add_encoder()
+        myTrainer.add_head()
+        
     # Running nepochs epochs
-    
     for epoch in range(0, total_epochs):
         if flag == 1:
             print('Evaluation!')
