@@ -88,11 +88,10 @@ class ResNet(nn.Module):
         self.fc = nn.Linear(512 * block.expansion, num_classes)
         if trainer == 'der':
             self.fc = nn.ModuleList()
-        if self.use_last_relu == False:
-            if trainer == 'rebalancing':
-                self.fc = NormedLinear(512 * block.expansion, num_classes)
-            elif trainer == 'podnet':
-                self.fc = LSCLinear(512 * block.expansion, num_classes)
+        if trainer == 'rebalancing':
+            self.fc = NormedLinear(512 * block.expansion, num_classes)
+        elif trainer == 'podnet':
+            self.fc = LSCLinear(512 * block.expansion, num_classes)
 
         self.encoder = self.init_encoder()
 
@@ -144,7 +143,7 @@ class ResNet(nn.Module):
                 self.layer3,
                 self.relu,
                 self.layer4,
-                last_relu,
+                self.last_relu,
                 self.avgpool,
                 nn.Flatten()
             )
