@@ -210,7 +210,7 @@ class ResNet(nn.Module):
             logits = []
             for i, encoder in enumerate(self.encoders):
                 logits.append(self.heads[i](encoder(x)))
-            x = logits.concat(logits, dim=1)
+            x = torch.concat(logits, dim=1)
 
         elif self.trainer =='podnet':
             x1 = self.layer1(self.maxpool(self.relu(self.bn1(self.conv1(x)))))
