@@ -116,15 +116,15 @@ class ResNet(nn.Module):
                 self.layer3,
                 self.relu,
                 self.layer4,
-                last_relu
+                last_relu,
                 self.avgpool,
                 nn.Flatten()
             )
+        
+        self.encoder = encoder
         if trainer == 'der':
             self.encoders = nn.ModuleList()
-            self.encoders.append(encoder)
-        else:
-            self.encoder = encoder
+            self.encoders.append(self.encoder)
                 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -144,7 +144,23 @@ class ResNet(nn.Module):
                     nn.init.constant_(m.bn2.weight, 0)
     
     def add_encoder(self):
-        self.encoders.append(self.encoder)
+        new_encoder = nn.Sequential(
+                self.conv1,
+                self.bn1,
+                self.relu,
+                self.maxpool,
+                self.layer1,
+                self.relu,
+                self.layer2,
+                self.relu,
+                self.layer3,
+                self.relu,
+                self.layer4,
+                last_relu,
+                self.avgpool,
+                nn.Flatten()
+            )
+        self.encoders.append(new_encoder)
         
     def add_head(self, num_outputs):
         self.heads.append(nn.Linear(512, num_outputs))
