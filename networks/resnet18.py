@@ -155,7 +155,12 @@ class ResNet(nn.Module):
         self.encoders.append(new_encoder)
         
     def add_head(self, num_outputs):
+        for head in self.heads:
+            head.eval()
+            for param in head.parameters():
+                param.requires_grad=False
         self.heads.append(nn.Linear(512, num_outputs))
+        
     
     def _make_layer(self, block, planes, blocks, stride=1, dilate=False):
         norm_layer = self._norm_layer
