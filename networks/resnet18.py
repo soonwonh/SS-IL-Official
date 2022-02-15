@@ -158,7 +158,8 @@ class ResNet(nn.Module):
             head.eval()
             for param in head.parameters():
                 param.requires_grad=False
-        self.heads.append(nn.Linear(512, num_outputs))
+        new_head = nn.Linear(512, num_outputs).cuda()
+        self.heads.append(new_head)
         
     
     def _make_layer(self, block, planes, blocks, stride=1, dilate=False):
