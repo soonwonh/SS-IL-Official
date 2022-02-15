@@ -30,8 +30,10 @@ print("Label shuffled")
 
 
 myModel = networks.ModelFactory.get_model(args.dataset, args.trainer)
+myModel = myModel.cuda()
 # Use Multi-GPU model
 #myModel = torch.nn.DataParallel(myModel).cuda()
+
 
 incremental_loader = data_handler.IncrementalLoader(dataset, args)
 result_loader = data_handler.ResultLoader(dataset, args)
