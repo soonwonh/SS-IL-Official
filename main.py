@@ -71,7 +71,7 @@ for t in range(tasknum):
         
     if args.trainer == 'der':
         myTrainer.model.add_encoder()
-        myTrainer.model.add_head()
+        myTrainer.model.add_head(args.step_size)
         
     # Running nepochs epochs
     for epoch in range(0, total_epochs):
