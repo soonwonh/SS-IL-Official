@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from networks.layers import NormedLinear, SplitNormedLinear, LSCLinear, SplitLSCLinear
+from copy import deepcopy
 
 def conv3x3(in_planes, out_planes, stride=1, groups=1, dilation=1):
     """3x3 convolution with padding"""
@@ -149,7 +150,7 @@ class ResNet(nn.Module):
         return encoder
     
     def add_encoder(self):
-        new_encoder = self.init_encoder().cuda()
+        new_encoder = deepcopy(self.encoders[-1])
         self.encoders.append(new_encoder)
         
     def add_head(self, num_outputs):
