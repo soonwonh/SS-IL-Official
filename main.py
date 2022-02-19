@@ -69,12 +69,17 @@ for t in range(tasknum):
     myTrainer.update_frozen_model()
     myTrainer.setup_training(lr)
     
-    # Load pre-trained model
-    flag = utils.load_models(args, myTrainer, t)
+    if args.trainer=='der':
+        flag = 0
+        pass
+    else:
+        # Load pre-trained model
+        flag = utils.load_models(args, myTrainer, t)
         
     if args.trainer == 'der':
         myTrainer.model.add_encoder()
         myTrainer.model.add_head(args.step_size)
+        print("step", args.step_size)
         
     # Running nepochs epochs
     for epoch in range(0, total_epochs):
