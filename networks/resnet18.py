@@ -98,6 +98,7 @@ class ResNet(nn.Module):
 
         if trainer == 'der':
             self.encoders = nn.ModuleList()
+            self.encoders.append(self.encoder)
                 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -150,8 +151,11 @@ class ResNet(nn.Module):
         return encoder
     
     def add_encoder(self):
-        new_encoder = deepcopy(self.encoders[-1])
-        self.encoders.append(new_encoder)
+        if len(self.encoders) == 1:
+            pass
+        elif len(self.encoders) > 1:
+            new_encoder = deepcopy(self.encoders[-1])
+            self.encoders.append(new_encoder)
         
     def add_head(self, num_outputs):
         for head in self.heads:
