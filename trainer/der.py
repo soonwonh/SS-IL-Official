@@ -41,9 +41,7 @@ class Trainer(trainer.GenericTrainer):
         
         for data, target in tqdm(self.train_iterator):
             data, target = data.cuda(), target.cuda()
-            
             output = self.model(data)
-            
             if tasknum > 0 and self.args.ss:
                 loss_CE_curr = 0
                 loss_CE_prev = 0
