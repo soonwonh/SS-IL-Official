@@ -87,6 +87,8 @@ class ResNet(nn.Module):
                              "or a 3-element tuple, got {}".format(self.replace_stride_with_dilation))
         
         self.fc = nn.Linear(512 * block.expansion, num_classes)
+        print("exp",block.expansion)
+        print("class",num_classes)
         if trainer == 'der':
             self.fc = nn.ModuleList()
         if trainer == 'rebalancing':
@@ -98,7 +100,6 @@ class ResNet(nn.Module):
 
         if trainer == 'der':
             self.encoders = nn.ModuleList()
-            self.encoders.append(self.encoder)
                 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -151,11 +152,12 @@ class ResNet(nn.Module):
         return encoder
     
     def add_encoder(self):
-        if len(self.encoders) == 1:
-            pass
-        elif len(self.encoders) > 1:
+        if len(self.encoders) == 0:
+            self.encoders.append(self.encoder)
+        else:
             new_encoder = deepcopy(self.encoders[-1])
             self.encoders.append(new_encoder)
+            #print("encoders!!", self.encoders)
         
     def add_head(self, num_outputs):
         for head in self.heads:
