@@ -87,8 +87,6 @@ class ResNet(nn.Module):
                              "or a 3-element tuple, got {}".format(self.replace_stride_with_dilation))
         
         self.fc = nn.Linear(512 * block.expansion, num_classes)
-        print("exp",block.expansion)
-        print("class",num_classes)
         if trainer == 'der':
             self.fc = nn.ModuleList()
         if trainer == 'rebalancing':
@@ -155,6 +153,10 @@ class ResNet(nn.Module):
         if len(self.encoders) == 0:
             self.encoders.append(self.encoder)
         else:
+            for encoder in self.encoders:
+                encoder.eval()
+                for param in encoder.parameters():
+                    param.requires_grad = False
             new_encoder = deepcopy(self.encoders[-1])
             self.encoders.append(new_encoder)
             #print("encoders!!", self.encoders)
